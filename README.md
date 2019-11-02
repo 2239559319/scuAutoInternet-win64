@@ -16,16 +16,16 @@
 1. 下载，点击右边的链接下载压缩包[下载链接][1],解压得到app文件夹
 
 2. 运行pro.exe文件进入主界面
-![pic1](./pic/pic1.png)
+![pic1](./pic/pic1.jpg)
 
     !注意关闭窗口会将程序最小化到托盘
 
     右下角会出现程序的托盘
-![pic2](./pic/pic2.png)
+![pic2](./pic/pic2.jpg)
 
 
 3. 双击托盘会显示窗口,右键托盘出现选项:显示窗口或者退出程序(这才是退出程序的正确方式)
-![pic3](./pic/pic3.png)
+![pic3](./pic/pic3.jpg)
 
 4. 在程序运行时(不点托盘右键退出)关机或者重启程序会自动退出校园网账号
 
@@ -39,4 +39,5 @@ C:\Users\yourname\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
 其中yourname是你自己的主文件夹
 ```
 
+### 程序交流,bug发送邮件到w2239559319@outlook.com
 [1]:https://github.com/2239559319/scuAutoInternet-win64/releases/download/0.0.2/app.rar
