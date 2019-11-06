@@ -13,9 +13,9 @@
 3. 在关机时自动登出校园网(程序需在后台运行不退出)
 
 ### 用法
-1. 下载，点击右边的链接下载压缩包[下载链接][1],解压得到app文件夹
+1. 下载，点击右边的链接下载可执行文件[下载链接][1]scuAutoInternet.exe文件(注意不要把文件放到c盘权限高的文件夹下)
 
-2. 运行pro.exe文件进入主界面
+2. 运行exe文件进入主界面
 ![pic1](./pic/pic1.jpg)
 
     !注意关闭窗口会将程序最小化到托盘
@@ -40,4 +40,4 @@ C:\Users\yourname\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
 ```
 
 ### 程序交流,bug发送邮件到w2239559319@outlook.com
-[1]:https://github.com/2239559319/scuAutoInternet-win64/releases/download/0.0.2/app.rar
+[1]:https://github.com/2239559319/scuAutoInternet-win64/releases/download/0.0.3/autoInternet.exe
