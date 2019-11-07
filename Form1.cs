@@ -1,105 +1,50 @@
-﻿using Microsoft.Win32;
-using System.Net.Http;
+﻿using System;
+using System.IO;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
-namespace pro
+namespace autoInternet
 {
-
-    class ReqUtil
-    {
-        private HttpClient client;
-
-        public ReqUtil()
-        {
-            this.client = new HttpClient();
-            this.client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36");
-        }
-        public string getLoginMsg()
-        {
-            string url = "http://192.168.2.135";
-            var response = this.client.GetAsync(url);
-            try
-            {
-                var text = response.Result.Content.ReadAsStringAsync();
-                var s = text.Result;
-                var m = System.Text.RegularExpressions.Regex.Match(s, @"href='(\S+)'");
-                return m.Groups[1].ToString().Split('?')[1];
-            }
-            catch (System.Exception)
-            {
-                return "你已在线";
-                throw;
-            }
-        }
-        public string login(string username, string password)
-        {
-            string p = this.getLoginMsg();
-            if (p == "你已在线")
-            {
-                return p;
-            }
-
-            string url = "http://192.168.2.135/eportal/InterFace.do?method=login";
-            System.Collections.Generic.Dictionary<string, string> data =
-            new System.Collections.Generic.Dictionary<string, string>();
-
-            data.Add("userId", username);
-            data.Add("password", password);
-            data.Add("service", "internet");
-            data.Add("queryString", p);
-            data.Add("operatorPwd", "");
-            data.Add("operatorUserId", "");
-            data.Add("validcode", "");
-            data.Add("passwordEncrypt", "false");
-
-            FormUrlEncodedContent formdata = new FormUrlEncodedContent(data);
-            var res = this.client.PostAsync(url, formdata);
-            var text = res.Result.Content.ReadAsStringAsync();
-            return text.Result;
-        }
-        public string getLogoutMsg()
-        {
-            string url = "http://192.168.2.135/eportal/InterFace.do?method=getOnlineUserInfo";
-            try
-            {
-                var res = this.client.GetAsync(url);
-                var text = res.Result.Content.ReadAsStringAsync();
-                var m = System.Text.RegularExpressions.Regex.Match(text.Result, "\"userIndex\":\"(\\w+)\"");
-                return m.Groups[1].ToString();
-            }
-            catch (System.Exception)
-            {
-                return "已处于下线";
-                throw;
-            }
-        }
-        public string logout()
-        {
-            string url = "http://192.168.2.135/eportal/InterFace.do?method=logout";
-            string userIndex = this.getLogoutMsg();
-            if (userIndex == "已处于下线")
-            {
-                return userIndex;
-            }
-            System.Collections.Generic.Dictionary<string, string> data =
-            new System.Collections.Generic.Dictionary<string, string>();
-            data.Add("userIndex", userIndex);
-
-            FormUrlEncodedContent formdata = new FormUrlEncodedContent(data);
-
-            var res = this.client.PostAsync(url, formdata);
-            var text = res.Result.Content.ReadAsStringAsync();
-            return text.Result;
-        }
-    }
 
     public partial class Form1 : Form
     {
+        public ReqUtil reqUtil = new ReqUtil();
         public Form1()
         {
             InitializeComponent();
             this.FormClosing += this.Form1_FormClosing;
             SystemEvents.SessionEnding += this.systemEvents_SessionEnding;
+            FileInfo f = new FileInfo("msg.txt");
+            if (f.Exists)
+            {
+                StreamReader r = new StreamReader("msg.txt");
+                string s = r.ReadToEnd();
+                this.username.Text = s.Split('\n')[0];
+                this.password.Text = s.Split('\n')[1];
+                r.Close();
+            }
+
+        }
+
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            this.notifyIcon.Visible = true;
+            this.Show();
+            this.WindowState = FormWindowState.Normal;
+            this.Focus();
+        }
+        protected void selectExit(object sender, EventArgs e)
+        {
+            notifyIcon.Visible = false;
+            this.Close();
+            this.Dispose(true);
+        }
+        protected void showWin(object sender, EventArgs e)
+        {
+            this.notifyIcon.Visible = true;
+            this.Show();
+            this.WindowState = FormWindowState.Normal;
+            this.Focus();
         }
         protected void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -118,5 +63,39 @@ namespace pro
             }
             e.Cancel = false;
         }
+        protected void login(object sender, EventArgs e)
+        {
+            FileInfo f = new FileInfo("./msg.txt");
+            if (!f.Exists)
+            {
+                StreamWriter w = new StreamWriter("./msg.txt");
+                w.WriteLine(this.username.Text);
+                w.Write(this.password.Text);
+                w.Close();
+            }
+
+            string getmsg = reqUtil.login(this.username.Text, this.password.Text);
+            if (getmsg.Contains("success"))
+            {
+                this.msg.Text = "登录成功";
+            }
+            else
+            {
+                this.msg.Text = "登录失败";
+            }
+        }
+        protected void logout(object sender, EventArgs e)
+        {
+            string getmsg = reqUtil.logout();
+            if (getmsg.Contains("下线成功"))
+            {
+                this.msg.Text = "下线成功";
+            }
+            else
+            {
+                this.msg.Text = "下线失败";
+            }
+        }
+
     }
 }
